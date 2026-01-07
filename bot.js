@@ -423,10 +423,16 @@ function setupQRServer() {
     }
   });
 
-  app.listen(QR_PORT, () => {
-    console.log(`\n🌐 QR Code tersedia di: http://localhost:${QR_PORT}`);
-    console.log(`📱 Buka URL di atas di browser untuk scan QR code\n`);
-  });
+  // Only start QR web server in local development
+  // In production (Railway), dashboard server handles web UI
+  if (!process.env.RAILWAY_ENVIRONMENT) {
+    app.listen(QR_PORT, () => {
+      console.log(`\n🌐 QR Code tersedia di: http://localhost:${QR_PORT}`);
+      console.log(`📱 Buka URL di atas di browser untuk scan QR code\n`);
+    });
+  } else {
+    console.log(`\n📱 Running in production - QR code available via dashboard\n`);
+  }
 }
 
 /**
