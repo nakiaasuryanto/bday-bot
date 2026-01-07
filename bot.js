@@ -602,52 +602,59 @@ async function main() {
 async function disconnectBot() {
   console.log('🔌 [DISCONNECT] Starting disconnect process...');
 
-  // Step 1: Logout from WhatsApp
+  // Step 1: Logout from WhatsApp (if connected)
   if (sock) {
     try {
       console.log('🔌 [DISCONNECT] Logging out from WhatsApp...');
       await sock.logout();
-      console.log('✅ [DISCONNECT] Logged out from WhatsApp');
+      console.log('✅ [DISCONNECT] Logged out successfully');
     } catch (err) {
-      console.error('⚠️ [DISCONNECT] Error during logout:', err.message);
-      // Continue anyway to clear session
+      console.log('⚠️ [DISCONNECT] Logout error (continuing):', err.message);
     }
-  } else {
-    console.log('⚠️ [DISCONNECT] No active socket to logout');
+    sock.end(undefined);
   }
 
-  // Step 2: Delete auth session folder
+  // Step 2: Delete auth session folder (FORCE)
+  console.log('🔌 [DISCONNECT] Force deleting auth session...');
   try {
-    console.log('🔌 [DISCONNECT] Clearing auth session folder...');
     if (fs.existsSync(AUTH_DIR)) {
-      fs.rmSync(AUTH_DIR, { recursive: true, force: true });
-      console.log('✅ [DISCONNECT] Auth session folder cleared');
-    } else {
-      console.log('⚠️ [DISCONNECT] Auth session folder not found');
+      // Delete all files first
+      const files = fs.readdirSync(AUTH_DIR);
+      for (const file of files) {
+        try {
+          fs.unlinkSync(path.join(AUTH_DIR, file));
+        } catch (e) {
+          console.log(`⚠️  Could not delete ${file}:`, e.message);
+        }
+      }
+      // Delete directory
+      fs.rmdirSync(AUTH_DIR);
+      console.log('✅ [DISCONNECT] Auth session deleted');
     }
   } catch (err) {
-    console.error('❌ [DISCONNECT] Error clearing auth session:', err.message);
-    throw new Error('Failed to clear session: ' + err.message);
+    console.error('❌ [DISCONNECT] Error deleting session:', err.message);
+    // Don't throw - continue anyway
   }
 
   // Step 3: Reset state
-  console.log('🔌 [DISCONNECT] Resetting bot state...');
   sock = null;
   currentQR = null;
   hasConnectedBefore = false;
+  console.log('✅ [DISCONNECT] State reset');
 
-  // Step 4: Reconnect to show QR again (non-blocking)
-  setTimeout(async () => {
-    console.log('🔄 [DISCONNECT] Reconnecting to generate new QR code...');
-    try {
+  // Step 4: Exit process to restart (Railway will auto-restart)
+  if (process.env.RAILWAY_ENVIRONMENT || process.env.PORT) {
+    console.log('🔄 [DISCONNECT] Exiting process - Railway will restart...');
+    setTimeout(() => process.exit(0), 1000);
+  } else {
+    // Local development - just reconnect
+    setTimeout(async () => {
+      console.log('🔄 [DISCONNECT] Reconnecting (local mode)...');
       await connectToWhatsApp();
-    } catch (err) {
-      console.error('❌ [DISCONNECT] Error reconnecting:', err.message);
-    }
-  }, 2000);
+    }, 2000);
+  }
 
-  console.log('✅ [DISCONNECT] Disconnect process completed');
-  return { success: true, message: 'Disconnected successfully' };
+  return { success: true };
 }
 
 /**
