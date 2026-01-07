@@ -682,8 +682,23 @@ async function getWhatsAppGroups() {
   }
 }
 
+// Getter functions for exports (to get live values)
+function getCurrentQR() {
+  return currentQR;
+}
+
+function getSocket() {
+  return sock;
+}
+
 // Export for use in server.js (Railway single process)
-export { main as startBot, currentQR, sock, disconnectBot, getWhatsAppGroups };
+export {
+  main as startBot,
+  getCurrentQR,
+  getSocket,
+  disconnectBot,
+  getWhatsAppGroups
+};
 
 // Start the bot only if run directly (not imported)
 if (import.meta.url === `file://${process.argv[1]}`) {
