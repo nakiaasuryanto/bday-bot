@@ -91,11 +91,15 @@ app.get('/api/logs', (req, res) => {
 });
 
 app.post('/api/disconnect', async (req, res) => {
+  console.log('📥 [API] Received disconnect request');
   try {
-    await disconnectBot();
+    console.log('📥 [API] Calling disconnectBot()...');
+    const result = await disconnectBot();
+    console.log('✅ [API] Disconnect successful:', result);
     res.json({ success: true, message: 'WhatsApp disconnected. Refresh page to scan QR code again.' });
   } catch (error) {
-    res.json({ success: false, message: 'Error disconnecting: ' + error.message });
+    console.error('❌ [API] Disconnect error:', error.message);
+    res.status(500).json({ success: false, message: 'Error disconnecting: ' + error.message });
   }
 });
 

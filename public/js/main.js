@@ -178,15 +178,26 @@ setInterval(refreshLogs, 10000);
 // Bot Control Functions
 function disconnectWhatsApp() {
     if (confirm('Are you sure you want to disconnect WhatsApp? You will need to scan QR code again.')) {
+        console.log('[DISCONNECT] Sending disconnect request to server...');
         fetch('/api/disconnect', { method: 'POST' })
-            .then(res => res.json())
+            .then(res => {
+                console.log('[DISCONNECT] Server response status:', res.status);
+                if (!res.ok) {
+                    throw new Error('Server responded with status: ' + res.status);
+                }
+                return res.json();
+            })
             .then(data => {
+                console.log('[DISCONNECT] Server response:', data);
                 alert(data.message);
-                setTimeout(() => location.reload(), 2000);
+                if (data.success) {
+                    console.log('[DISCONNECT] Success! Reloading page in 2 seconds...');
+                    setTimeout(() => location.reload(), 2000);
+                }
             })
             .catch(err => {
-                alert('Error disconnecting WhatsApp');
-                console.error(err);
+                console.error('[DISCONNECT] Error:', err);
+                alert('Error disconnecting WhatsApp: ' + err.message);
             });
     }
 }

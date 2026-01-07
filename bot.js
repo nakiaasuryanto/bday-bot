@@ -600,37 +600,54 @@ async function main() {
  * Disconnect WhatsApp and clear session
  */
 async function disconnectBot() {
-  console.log('🔌 Disconnecting WhatsApp...');
+  console.log('🔌 [DISCONNECT] Starting disconnect process...');
 
+  // Step 1: Logout from WhatsApp
   if (sock) {
     try {
+      console.log('🔌 [DISCONNECT] Logging out from WhatsApp...');
       await sock.logout();
-      console.log('✅ Logged out from WhatsApp');
+      console.log('✅ [DISCONNECT] Logged out from WhatsApp');
     } catch (err) {
-      console.error('Error during logout:', err.message);
+      console.error('⚠️ [DISCONNECT] Error during logout:', err.message);
+      // Continue anyway to clear session
     }
+  } else {
+    console.log('⚠️ [DISCONNECT] No active socket to logout');
   }
 
-  // Delete auth session folder
+  // Step 2: Delete auth session folder
   try {
+    console.log('🔌 [DISCONNECT] Clearing auth session folder...');
     if (fs.existsSync(AUTH_DIR)) {
       fs.rmSync(AUTH_DIR, { recursive: true, force: true });
-      console.log('✅ Auth session cleared');
+      console.log('✅ [DISCONNECT] Auth session folder cleared');
+    } else {
+      console.log('⚠️ [DISCONNECT] Auth session folder not found');
     }
   } catch (err) {
-    console.error('Error clearing auth session:', err.message);
+    console.error('❌ [DISCONNECT] Error clearing auth session:', err.message);
+    throw new Error('Failed to clear session: ' + err.message);
   }
 
-  // Reset state
+  // Step 3: Reset state
+  console.log('🔌 [DISCONNECT] Resetting bot state...');
   sock = null;
   currentQR = null;
   hasConnectedBefore = false;
 
-  // Reconnect to show QR again
+  // Step 4: Reconnect to show QR again (non-blocking)
   setTimeout(async () => {
-    console.log('🔄 Reconnecting to show new QR code...');
-    await connectToWhatsApp();
+    console.log('🔄 [DISCONNECT] Reconnecting to generate new QR code...');
+    try {
+      await connectToWhatsApp();
+    } catch (err) {
+      console.error('❌ [DISCONNECT] Error reconnecting:', err.message);
+    }
   }, 2000);
+
+  console.log('✅ [DISCONNECT] Disconnect process completed');
+  return { success: true, message: 'Disconnected successfully' };
 }
 
 /**
