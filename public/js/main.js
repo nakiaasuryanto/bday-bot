@@ -175,6 +175,55 @@ function refreshLogs() {
 // Auto-refresh logs every 10 seconds
 setInterval(refreshLogs, 10000);
 
+// Bot Control Functions
+function disconnectWhatsApp() {
+    if (confirm('Are you sure you want to disconnect WhatsApp? You will need to scan QR code again.')) {
+        fetch('/api/disconnect', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                setTimeout(() => location.reload(), 2000);
+            })
+            .catch(err => {
+                alert('Error disconnecting WhatsApp');
+                console.error(err);
+            });
+    }
+}
+
+function clearLogs() {
+    if (confirm('Clear birthday log?')) {
+        fetch('/api/clear-birthday-log', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                setTimeout(refreshLogs, 1000);
+            })
+            .catch(err => {
+                alert('Error clearing logs');
+                console.error(err);
+            });
+    }
+}
+
+function getGroups() {
+    if (confirm('Fetch WhatsApp groups? This will take a few seconds.')) {
+        fetch('/api/get-groups', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                if (data.output) {
+                    console.log('Groups Output:', data.output);
+                }
+                setTimeout(refreshLogs, 2000);
+            })
+            .catch(err => {
+                alert('Error getting groups');
+                console.error(err);
+            });
+    }
+}
+
 // Reset form when modal closes
 const modal = document.getElementById('addBirthdayModal');
 if (modal) {

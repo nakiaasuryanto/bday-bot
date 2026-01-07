@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import { startBot } from './bot.js';
+import { startBot, disconnectBot, getWhatsAppGroups } from './bot.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -90,15 +90,13 @@ app.get('/api/logs', (req, res) => {
   }
 });
 
-app.post('/api/reload-bot', (req, res) => {
-  const { exec } = require('child_process');
-  exec('npm run reload-bot', (error, stdout, stderr) => {
-    if (error) {
-      res.json({ success: false, message: 'Error reloading bot: ' + error.message });
-    } else {
-      res.json({ success: true, message: 'Bot reloaded successfully!' });
-    }
-  });
+app.post('/api/disconnect', async (req, res) => {
+  try {
+    await disconnectBot();
+    res.json({ success: true, message: 'WhatsApp disconnected. Refresh page to scan QR code again.' });
+  } catch (error) {
+    res.json({ success: false, message: 'Error disconnecting: ' + error.message });
+  }
 });
 
 app.post('/api/clear-birthday-log', (req, res) => {
@@ -136,15 +134,13 @@ app.post('/api/test-message', (req, res) => {
   });
 });
 
-app.post('/api/get-groups', (req, res) => {
-  const { exec } = require('child_process');
-  exec('npm run groups', (error, stdout, stderr) => {
-    if (error) {
-      res.json({ success: false, message: 'Error getting groups: ' + error.message });
-    } else {
-      res.json({ success: true, message: 'Groups fetched! Check console output.', output: stdout });
-    }
-  });
+app.post('/api/get-groups', async (req, res) => {
+  try {
+    const groups = await getWhatsAppGroups();
+    res.json({ success: true, message: 'Groups fetched! Check logs below.', output: groups });
+  } catch (error) {
+    res.json({ success: false, message: 'Error getting groups: ' + error.message });
+  }
 });
 
 app.listen(PORT, async () => {

@@ -596,8 +596,77 @@ async function main() {
   console.log('✨ Bot is running! Press Ctrl+C to stop.\n');
 }
 
+/**
+ * Disconnect WhatsApp and clear session
+ */
+async function disconnectBot() {
+  console.log('🔌 Disconnecting WhatsApp...');
+
+  if (sock) {
+    try {
+      await sock.logout();
+      console.log('✅ Logged out from WhatsApp');
+    } catch (err) {
+      console.error('Error during logout:', err.message);
+    }
+  }
+
+  // Delete auth session folder
+  try {
+    if (fs.existsSync(AUTH_DIR)) {
+      fs.rmSync(AUTH_DIR, { recursive: true, force: true });
+      console.log('✅ Auth session cleared');
+    }
+  } catch (err) {
+    console.error('Error clearing auth session:', err.message);
+  }
+
+  // Reset state
+  sock = null;
+  currentQR = null;
+  hasConnectedBefore = false;
+
+  // Reconnect to show QR again
+  setTimeout(async () => {
+    console.log('🔄 Reconnecting to show new QR code...');
+    await connectToWhatsApp();
+  }, 2000);
+}
+
+/**
+ * Get WhatsApp groups
+ */
+async function getWhatsAppGroups() {
+  if (!sock) {
+    throw new Error('Bot not connected to WhatsApp');
+  }
+
+  console.log('📋 Fetching WhatsApp groups...');
+
+  try {
+    const groups = await sock.groupFetchAllParticipating();
+    const groupList = Object.values(groups).map(group => ({
+      id: group.id,
+      name: group.subject,
+      participants: group.participants.length
+    }));
+
+    console.log(`\n📊 Found ${groupList.length} groups:\n`);
+    groupList.forEach(g => {
+      console.log(`  • ${g.name}`);
+      console.log(`    ID: ${g.id}`);
+      console.log(`    Members: ${g.participants}\n`);
+    });
+
+    return JSON.stringify(groupList, null, 2);
+  } catch (err) {
+    console.error('Error fetching groups:', err.message);
+    throw err;
+  }
+}
+
 // Export for use in server.js (Railway single process)
-export { main as startBot, currentQR, sock };
+export { main as startBot, currentQR, sock, disconnectBot, getWhatsAppGroups };
 
 // Start the bot only if run directly (not imported)
 if (import.meta.url === `file://${process.argv[1]}`) {
