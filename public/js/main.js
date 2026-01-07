@@ -12,6 +12,11 @@ $(document).ready(function() {
 
     // Load logs on page load
     refreshLogs();
+
+    // Check WhatsApp status
+    checkWhatsAppStatus();
+    // Poll status every 3 seconds
+    setInterval(checkWhatsAppStatus, 3000);
 });
 
 // Birthday Management Functions
@@ -175,6 +180,44 @@ function refreshLogs() {
 // Auto-refresh logs every 10 seconds
 setInterval(refreshLogs, 10000);
 
+// WhatsApp Status Check
+function checkWhatsAppStatus() {
+    fetch('/api/status')
+        .then(res => res.json())
+        .then(data => {
+            const statusDiv = document.getElementById('whatsappStatus');
+
+            if (data.connected && !data.qr) {
+                // Connected - show green checkmark
+                statusDiv.innerHTML = `
+                    <i class="fas fa-check-circle text-success" style="font-size: 48px;"></i>
+                    <p class="mt-3 mb-1"><strong>WhatsApp Connected</strong></p>
+                    <p class="text-muted small">Bot is running and ready to send messages</p>
+                    <button class="btn btn-sm btn-danger mt-2" onclick="disconnectWhatsApp()">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout WhatsApp
+                    </button>
+                `;
+            } else if (data.qr) {
+                // Not connected - show QR code
+                statusDiv.innerHTML = `
+                    <img src="${data.qr}" alt="QR Code" style="max-width: 200px; border: 2px solid #ddd; padding: 10px; background: white;">
+                    <p class="mt-3 mb-1"><strong>Scan QR Code</strong></p>
+                    <p class="text-muted small">Open WhatsApp > Linked Devices > Link a Device</p>
+                `;
+            } else {
+                // Connecting - show spinner
+                statusDiv.innerHTML = `
+                    <i class="fas fa-spinner fa-spin text-warning" style="font-size: 48px;"></i>
+                    <p class="mt-3 mb-1"><strong>Connecting...</strong></p>
+                    <p class="text-muted small">Waiting for WhatsApp connection</p>
+                `;
+            }
+        })
+        .catch(err => {
+            console.error('Error checking status:', err);
+        });
+}
+
 // Bot Control Functions
 function disconnectWhatsApp() {
     if (confirm('Are you sure you want to disconnect WhatsApp? You will need to scan QR code again.')) {
@@ -191,8 +234,8 @@ function disconnectWhatsApp() {
                 console.log('[DISCONNECT] Server response:', data);
                 alert(data.message);
                 if (data.success) {
-                    console.log('[DISCONNECT] Success! Reloading page in 2 seconds...');
-                    setTimeout(() => location.reload(), 2000);
+                    console.log('[DISCONNECT] Success! Will check status automatically...');
+                    // Don't reload, let the status checker handle it
                 }
             })
             .catch(err => {

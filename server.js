@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import { startBot, disconnectBot, getWhatsAppGroups, getSocket } from './bot.js';
+import { startBot, disconnectBot, getWhatsAppGroups, getSocket, getCurrentQR } from './bot.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,10 +47,12 @@ app.get('/', (req, res) => {
 // API Routes
 app.get('/api/status', (req, res) => {
   const sock = getSocket();
+  const qr = getCurrentQR();
   res.json({
     connected: sock ? true : false,
     socketExists: sock !== null && sock !== undefined,
-    authSessionExists: fs.existsSync(path.join(__dirname, 'auth_session'))
+    authSessionExists: fs.existsSync(path.join(__dirname, 'auth_session')),
+    qr: qr || null
   });
 });
 
