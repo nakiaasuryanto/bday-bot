@@ -548,8 +548,13 @@ async function main() {
   // Setup shutdown handlers
   setupShutdownHandlers();
 
-  // Setup QR code web server
-  setupQRServer();
+  // Setup QR code web server (local only)
+  // In production, server.js handles the web UI
+  if (!process.env.RAILWAY_ENVIRONMENT && !process.env.PORT) {
+    setupQRServer();
+  } else {
+    console.log('📱 Production mode - Skipping QR web server (handled by dashboard)\n');
+  }
 
   // Check if birthdays.json exists
   if (!fs.existsSync(BIRTHDAYS_FILE)) {
