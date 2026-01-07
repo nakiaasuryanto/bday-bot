@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# WhatsApp Auth Session
+auth_session/
+
+# Birthday Data (contains personal info)
+birthdays.json
+
+# Logs
+*.log
+birthday_log.txt
+
+# macOS
+.DS_Store
+*.plist
+launchd-error.log
+
+# Screenshots
+*.png
+*.jpg
+*.jpeg
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/

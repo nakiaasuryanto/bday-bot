@@ -1,0 +1,31 @@
+{
+  "name": "whatsapp-birthday-bot",
+  "version": "1.0.0",
+  "description": "WhatsApp bot that automatically sends birthday wishes to groups",
+  "main": "bot.js",
+  "type": "module",
+  "scripts": {
+    "start": "node start.js",
+    "bot": "node bot.js",
+    "web": "node server.js",
+    "test": "node test.js",
+    "groups": "node get-groups.js",
+    "reload-bot": "launchctl unload ~/Library/LaunchAgents/com.birthdaybot.plist && launchctl load ~/Library/LaunchAgents/com.birthdaybot.plist && echo '✅ Bot reloaded successfully!'"
+  },
+  "keywords": [
+    "whatsapp",
+    "bot",
+    "birthday",
+    "automation"
+  ],
+  "author": "FabrikGroup",
+  "license": "ISC",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^7.0.0-rc.9",
+    "ejs": "^3.1.10",
+    "express": "^4.18.2",
+    "node-cron": "^3.0.3",
+    "qrcode": "^1.5.3",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

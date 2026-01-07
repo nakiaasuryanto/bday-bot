@@ -1,0 +1,267 @@
+:root {
+    --primary-color: #556ee6;
+    --sidebar-bg: #2a3042;
+    --sidebar-item-hover: #363b4d;
+    --header-bg: #2a3042;
+    --body-bg: #f5f6f8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--body-bg);
+}
+
+/* Header */
+.portal-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 250px;
+    z-index: 1000;
+    height: 70px;
+    background-color: var(--header-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    box-shadow: 0 1px 2px rgba(56,65,74,.15);
+}
+
+.portal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.portal-menu-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.portal-logo-image {
+    height: 40px;
+}
+
+.portal-header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.portal-header-item {
+    background: rgba(255,255,255,.05);
+    border: none;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.portal-header-item:hover {
+    background: rgba(255,255,255,.1);
+}
+
+/* Sidebar */
+.portal-sidebar {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    bottom: 0;
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    overflow-y: auto;
+    padding: 20px 0;
+    z-index: 999;
+}
+
+.portal-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 24px;
+    color: #a6b0cf;
+    text-decoration: none;
+    transition: all 0.3s;
+    gap: 12px;
+}
+
+.portal-menu-item i {
+    width: 20px;
+    font-size: 16px;
+}
+
+.portal-menu-item:hover {
+    background-color: var(--sidebar-item-hover);
+    color: #fff;
+}
+
+.portal-menu-item.active {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.portal-menu-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.portal-menu-section-label {
+    height: 1px;
+    background: rgba(166,176,207,.2);
+    margin: 15px 0;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 250px;
+    margin-top: 70px;
+    min-height: calc(100vh - 70px);
+}
+
+.page-content {
+    padding: 24px;
+}
+
+.portal-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.portal-page-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #495057;
+    margin: 0;
+}
+
+.portal-header-date {
+    font-size: 13px;
+    color: #74788d;
+    margin-bottom: 4px;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(56,65,74,.15);
+    margin-bottom: 24px;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+.card-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #495057;
+}
+
+/* Stats Card */
+.avatar-sm {
+    width: 3rem;
+    height: 3rem;
+    line-height: 3rem;
+}
+
+.avatar-title {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    color: #fff;
+}
+
+.rounded-circle {
+    border-radius: 50% !important;
+}
+
+.mini-stat-icon .avatar-title {
+    font-size: 24px;
+}
+
+/* Table */
+.table {
+    font-size: 14px;
+}
+
+.table thead th {
+    font-weight: 600;
+    color: #495057;
+    background-color: #f8f9fa;
+    border-bottom-width: 1px;
+}
+
+/* Footer */
+.footer {
+    padding: 20px 24px;
+    background-color: #fff;
+    border-top: 1px solid #f5f6f8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .portal-header {
+        left: 0;
+    }
+
+    .portal-sidebar {
+        left: -250px;
+        transition: left 0.3s;
+    }
+
+    .portal-sidebar.show {
+        left: 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .portal-sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 998;
+    }
+
+    .portal-sidebar-overlay.show {
+        display: block;
+    }
+}
+
+/* Badge */
+.badge {
+    padding: 0.35em 0.65em;
+    font-weight: 500;
+}
+
+/* Buttons */
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.bg-primary { background-color: #556ee6 !important; }
+.bg-success { background-color: #34c38f !important; }
+.bg-info { background-color: #50a5f1 !important; }
+.bg-warning { background-color: #f1b44c !important; }
+.bg-danger { background-color: #f46a6a !important; }

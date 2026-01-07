@@ -1,0 +1,38 @@
+<header class="portal-header">
+    <div class="portal-header-left">
+        <button type="button" class="portal-menu-toggle" id="portal-menu-toggle">
+            <i class="fas fa-indent"></i>
+        </button>
+
+        <a href="/" class="portal-logo">
+            <img src="https://hr.vidogarment.com/assets/images/dashboard-logo1.png" alt="Logo" class="portal-logo-image">
+        </a>
+    </div>
+    <div class="portal-header-right">
+        <!-- Clock -->
+        <button type="button" class="portal-header-item" id="portal-clock-btn">
+            <i class="mdi mdi-clock"></i>
+            <span id="time"></span>
+        </button>
+
+        <!-- Dark Mode Toggle -->
+        <button type="button" class="portal-header-item" id="mode-setting-btn">
+            <i class="fas fa-moon icon-lg layout-mode-dark"></i>
+            <i class="fas fa-sun icon-lg layout-mode-light" style="display:none;"></i>
+        </button>
+
+        <!-- User Dropdown -->
+        <div class="dropdown">
+            <button class="portal-header-item" type="button" id="page-header-user-dropdown" data-bs-toggle="dropdown">
+                <i class="fas fa-user"></i>
+                <span class="d-none d-xl-inline-block">Admin</span>
+                <i class="fas fa-chevron-down d-none d-xl-inline-block"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#"><i class="fas fa-power-off me-2"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+</header>

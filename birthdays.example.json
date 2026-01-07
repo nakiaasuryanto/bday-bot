@@ -1,0 +1,14 @@
+[
+  {
+    "nama": "John Doe",
+    "tanggal_lahir": "1990-01-15",
+    "grup_id": "120363123456789012@g.us",
+    "grup_nama": "Example Group"
+  },
+  {
+    "nama": "Jane Smith",
+    "tanggal_lahir": "1992-05-20",
+    "grup_id": "120363123456789012@g.us",
+    "grup_nama": "Example Group"
+  }
+]
