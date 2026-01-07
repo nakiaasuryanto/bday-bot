@@ -20,6 +20,31 @@ $(document).ready(function() {
 });
 
 // Birthday Management Functions
+function previewMessage(index) {
+    fetch('/api/preview-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ index })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('previewPerson').textContent = data.person;
+            document.getElementById('previewAge').textContent = data.age;
+            document.getElementById('previewGroup').textContent = data.group;
+            document.getElementById('previewMessage').textContent = data.message;
+
+            const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+            modal.show();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(err => {
+        alert('Error loading preview: ' + err.message);
+    });
+}
+
 function editBirthday(index) {
     fetch('/api/birthdays')
         .then(res => res.json())

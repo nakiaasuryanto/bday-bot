@@ -704,7 +704,9 @@ export {
   getCurrentQR,
   getSocket,
   disconnectBot,
-  getWhatsAppGroups
+  getWhatsAppGroups,
+  generateBirthdayMessage,
+  calculateAge
 };
 
 // Start the bot only if run directly (not imported)

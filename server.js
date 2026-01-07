@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import { startBot, disconnectBot, getWhatsAppGroups, getSocket, getCurrentQR } from './bot.js';
+import { startBot, disconnectBot, getWhatsAppGroups, getSocket, getCurrentQR, generateBirthdayMessage, calculateAge } from './bot.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -157,6 +157,31 @@ app.post('/api/get-groups', async (req, res) => {
     res.json({ success: true, message: 'Groups fetched! Check logs below.', output: groups });
   } catch (error) {
     res.json({ success: false, message: 'Error getting groups: ' + error.message });
+  }
+});
+
+app.post('/api/preview-message', (req, res) => {
+  try {
+    const { index } = req.body;
+    const birthdays = loadBirthdays();
+
+    if (index < 0 || index >= birthdays.length) {
+      return res.status(404).json({ success: false, message: 'Birthday not found' });
+    }
+
+    const birthday = birthdays[index];
+    const age = calculateAge(birthday.tanggal_lahir);
+    const message = generateBirthdayMessage(birthday, age);
+
+    res.json({
+      success: true,
+      message: message,
+      person: birthday.nama,
+      age: age,
+      group: birthday.grup_nama
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error generating preview: ' + error.message });
   }
 });
 
