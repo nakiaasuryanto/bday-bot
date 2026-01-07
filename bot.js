@@ -642,18 +642,16 @@ async function disconnectBot() {
   hasConnectedBefore = false;
   console.log('✅ [DISCONNECT] State reset');
 
-  // Step 4: Exit process to restart (Railway will auto-restart)
-  if (process.env.RAILWAY_ENVIRONMENT || process.env.PORT) {
-    console.log('🔄 [DISCONNECT] Exiting process - Railway will restart...');
-    setTimeout(() => process.exit(0), 1000);
-  } else {
-    // Local development - just reconnect
+  // Step 4: Reconnect (local only) - production will exit in server.js
+  if (!process.env.RAILWAY_ENVIRONMENT && !process.env.PORT) {
+    // Local development - reconnect to show new QR
     setTimeout(async () => {
       console.log('🔄 [DISCONNECT] Reconnecting (local mode)...');
       await connectToWhatsApp();
     }, 2000);
   }
 
+  console.log('✅ [DISCONNECT] Disconnect completed');
   return { success: true };
 }
 
