@@ -106,17 +106,8 @@ app.post('/api/disconnect', async (req, res) => {
     const result = await disconnectBot();
     console.log('✅ [API] Disconnect successful:', result);
 
-    // Send response first
+    // Send response - bot will reconnect automatically
     res.json({ success: true, message: 'WhatsApp disconnected. Refresh page to scan QR code again.' });
-
-    // Exit process on Railway AFTER response is sent
-    if (process.env.RAILWAY_ENVIRONMENT || process.env.PORT) {
-      console.log('🔄 [API] Exiting process in 1 second - Railway will restart...');
-      setTimeout(() => {
-        console.log('👋 [API] Exiting now...');
-        process.exit(0);
-      }, 1000);
-    }
   } catch (error) {
     console.error('❌ [API] Disconnect error:', error.message);
     res.status(500).json({ success: false, message: 'Error disconnecting: ' + error.message });
