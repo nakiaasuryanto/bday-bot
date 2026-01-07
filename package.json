@@ -2,7 +2,7 @@
   "name": "whatsapp-birthday-bot",
   "version": "1.0.0",
   "description": "WhatsApp bot that automatically sends birthday wishes to groups",
-  "main": "bot.js",
+  "main": "start.js",
   "type": "module",
   "scripts": {
     "start": "node start.js",
