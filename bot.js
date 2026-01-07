@@ -19,8 +19,8 @@ const AUTH_DIR = path.join(__dirname, 'auth_session');
 // Global socket variable
 let sock;
 
-// Express app for QR code display
-const app = express();
+// Express app for QR code display (local dev only)
+let app = null;
 let currentQR = null;
 const QR_PORT = 3000;
 
@@ -263,6 +263,9 @@ async function checkBirthdays() {
  * Setup Express server for QR code display
  */
 function setupQRServer() {
+  // Create express app only when needed (local dev)
+  app = express();
+
   app.get('/', (req, res) => {
     res.send(`
 <!DOCTYPE html>
