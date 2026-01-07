@@ -575,8 +575,13 @@ async function main() {
   console.log('✨ Bot is running! Press Ctrl+C to stop.\n');
 }
 
-// Start the bot
-main().catch(err => {
-  console.error('❌ Fatal error:', err);
-  process.exit(1);
-});
+// Export for use in server.js (Railway single process)
+export { main as startBot, currentQR, sock };
+
+// Start the bot only if run directly (not imported)
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch(err => {
+    console.error('❌ Fatal error:', err);
+    process.exit(1);
+  });
+}

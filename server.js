@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import { startBot } from './bot.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -146,6 +147,14 @@ app.post('/api/get-groups', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🌐 Birthday Bot Dashboard running at http://localhost:${PORT}`);
+
+  // Start WhatsApp bot (single process for Railway)
+  console.log('\n🤖 Starting WhatsApp Bot...\n');
+  try {
+    await startBot();
+  } catch (err) {
+    console.error('❌ Error starting bot:', err);
+  }
 });
