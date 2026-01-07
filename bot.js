@@ -18,6 +18,7 @@ const AUTH_DIR = path.join(__dirname, 'auth_session');
 
 // Global socket variable
 let sock;
+let hasConnectedBefore = false;
 
 // Express app for QR code display (local dev only)
 let app = null;
@@ -460,10 +461,15 @@ async function connectToWhatsApp() {
       try {
         // Generate QR code as base64 data URL
         currentQR = await QRCode.toDataURL(qr);
-        console.log('📱 QR Code baru tersedia di http://localhost:' + QR_PORT);
 
-        // Also display in terminal for convenience
-        qrcodeTerminal.generate(qr, { small: true });
+        // Log QR availability (local dev shows URL, production shows ready state)
+        if (!process.env.RAILWAY_ENVIRONMENT && !process.env.PORT) {
+          console.log('📱 QR Code baru tersedia di http://localhost:' + QR_PORT);
+          // Display in terminal for convenience (local only)
+          qrcodeTerminal.generate(qr, { small: true });
+        } else {
+          console.log('📱 QR Code generated - scan via dashboard');
+        }
       } catch (err) {
         console.error('❌ Error generating QR:', err.message);
       }
@@ -474,14 +480,21 @@ async function connectToWhatsApp() {
 
       console.log('❌ Koneksi terputus:', lastDisconnect?.error?.message);
 
-      if (shouldReconnect) {
+      // Only auto-reconnect if we've successfully connected before
+      // This prevents reconnect loop when QR hasn't been scanned
+      if (shouldReconnect && hasConnectedBefore) {
         console.log('🔄 Mencoba reconnect dalam 5 detik...');
         setTimeout(() => connectToWhatsApp(), 5000);
+      } else if (!hasConnectedBefore) {
+        console.log('⏳ Menunggu QR code di-scan. Tidak akan auto-reconnect.');
       } else {
         console.log('⚠️  Logged out. Silakan hapus folder auth_session dan login ulang.');
         process.exit(0);
       }
     } else if (connection === 'open') {
+      // Mark that we've connected successfully
+      hasConnectedBefore = true;
+
       // Clear QR code when connected
       currentQR = null;
 
