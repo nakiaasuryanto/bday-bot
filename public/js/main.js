@@ -225,7 +225,7 @@ function checkWhatsAppStatus() {
             } else if (data.qr) {
                 // Not connected - show QR code
                 statusDiv.innerHTML = `
-                    <img src="${data.qr}" alt="QR Code" style="max-width: 200px; border: 2px solid #ddd; padding: 10px; background: white;">
+                    <img src="${data.qr}" alt="QR Code" style="width: 256px; height: 256px; border: 2px solid #ddd; padding: 10px; background: white; image-rendering: pixelated;">
                     <p class="mt-3 mb-1"><strong>Scan QR Code</strong></p>
                     <p class="text-muted small">Open WhatsApp > Linked Devices > Link a Device</p>
                 `;

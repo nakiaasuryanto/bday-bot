@@ -459,8 +459,16 @@ async function connectToWhatsApp() {
 
     if (qr) {
       try {
-        // Generate QR code as base64 data URL
-        currentQR = await QRCode.toDataURL(qr);
+        // Generate QR code as base64 data URL with larger size and better quality
+        currentQR = await QRCode.toDataURL(qr, {
+          width: 512,
+          margin: 2,
+          color: {
+            dark: '#000000',
+            light: '#FFFFFF'
+          },
+          errorCorrectionLevel: 'H'
+        });
 
         // Log QR availability (local dev shows URL, production shows ready state)
         if (!process.env.RAILWAY_ENVIRONMENT && !process.env.PORT) {
