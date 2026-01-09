@@ -270,6 +270,29 @@ function disconnectWhatsApp() {
     }
 }
 
+function forceRestart() {
+    if (confirm('⚠️ FORCE RESTART will completely restart the bot and clear all session data.\n\nThis will:\n- Logout WhatsApp immediately\n- Delete auth session\n- Restart entire app\n- Generate fresh QR code\n\nContinue?')) {
+        console.log('[FORCE RESTART] Initiating force restart...');
+        alert('Force restart initiated. App will restart in 2 seconds.\n\nPage will reload automatically after restart.');
+
+        fetch('/api/force-restart', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                console.log('[FORCE RESTART] Server response:', data);
+                // Wait 5 seconds then reload (give time for restart)
+                setTimeout(() => {
+                    console.log('[FORCE RESTART] Reloading page...');
+                    location.reload();
+                }, 5000);
+            })
+            .catch(err => {
+                console.error('[FORCE RESTART] Error:', err);
+                // Still reload in case server already restarted
+                setTimeout(() => location.reload(), 5000);
+            });
+    }
+}
+
 function clearLogs() {
     if (confirm('Clear birthday log?')) {
         fetch('/api/clear-birthday-log', { method: 'POST' })

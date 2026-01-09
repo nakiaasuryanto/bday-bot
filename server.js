@@ -116,6 +116,28 @@ app.post('/api/disconnect', async (req, res) => {
   }
 });
 
+app.post('/api/force-restart', async (req, res) => {
+  console.log('🔥 [API] FORCE RESTART requested');
+  try {
+    // Disconnect bot first
+    console.log('🔥 [API] Disconnecting bot...');
+    await disconnectBot();
+
+    // Send success response
+    res.json({ success: true, message: 'Force restart initiated. App will restart in 2 seconds...' });
+
+    // Force exit process after response is sent
+    console.log('🔥 [API] Exiting process in 2 seconds...');
+    setTimeout(() => {
+      console.log('💥 [API] FORCE EXIT NOW!');
+      process.exit(0);
+    }, 2000);
+  } catch (error) {
+    console.error('❌ [API] Force restart error:', error.message);
+    res.status(500).json({ success: false, message: 'Error: ' + error.message });
+  }
+});
+
 app.post('/api/clear-birthday-log', (req, res) => {
   try {
     fs.writeFileSync(path.join(__dirname, 'birthday_log.txt'), '');
