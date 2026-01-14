@@ -230,11 +230,14 @@ function checkWhatsAppStatus() {
                     <p class="text-muted small">Open WhatsApp > Linked Devices > Link a Device</p>
                 `;
             } else {
-                // Connecting - show spinner
+                // Not connected - show red X
                 statusDiv.innerHTML = `
-                    <i class="fas fa-spinner fa-spin text-warning" style="font-size: 48px;"></i>
-                    <p class="mt-3 mb-1"><strong>Connecting...</strong></p>
-                    <p class="text-muted small">Waiting for WhatsApp connection</p>
+                    <i class="fas fa-times-circle text-danger" style="font-size: 48px;"></i>
+                    <p class="mt-3 mb-1"><strong>Not Connected</strong></p>
+                    <p class="text-muted small">WhatsApp is not connected. Click Force Restart to generate QR code.</p>
+                    <button class="btn btn-sm btn-warning mt-2" onclick="forceRestart()">
+                        <i class="fas fa-redo me-1"></i> Force Restart
+                    </button>
                 `;
             }
         })

@@ -175,17 +175,20 @@ function generateBirthdayMessage(birthday, age) {
   // Format nomor WhatsApp untuk tag
   const waTag = nomor_wa ? `@${nomor_wa}` : nama;
 
-  return `Alhamdulillāh… ✨
+  return `Alhamdulillah... ✨
 
 Hari ini kita bersyukur atas bertambahnya usia ${nama} (${role}) yang berulang tahun pada ${tanggalBulan}, memasuki usia ke-${age} tahun 🥳
 
-Semoga Allah ﷻ senantiasa melimpahkan kesehatan, keberkahan usia, kelapangan rezeki, dan kebahagiaan dalam setiap langkah kehidupan. Semoga setiap kebaikan yang telah dan akan dilakukan menjadi amal jariyah yang diridhai-Nya 🤍 Di usia yang baru ini, semoga Allah mudahkan segala urusan, menguatkan niat baik, melancarkan setiap ikhtiar, dan mengabulkan doa serta impian yang sedang diperjuangkan. Semoga pula terus diberi kesempatan untuk memberi manfaat dan inspirasi bagi sekitar 🌱
+Semoga Allah senantiasa melimpahkan keseharan, keberkahan usia, kelapangan rezeki, dan kebahagiaan dalam setiap langkah kehidupan.
+Semoga setiap kebaikan yang telah dan akan dilakukan menjadi amal jariyah yang diridhai-Nya ⭐️
 
-Aamiin ya Rabbal 'alamin 🤲
+Diusia yang baru ini, semoga Allah mudahkan segala urusan, menguatkan niat baik, melancarkan setiap ikhtiar, dan mengabulkan doa serta impian yang sedang diperjuangkan. Semoga pula terus diberi kesempatan untuk memberi manfaat dan inspirasi bagi sekitar 🌱
+
+Aamiin Yaa Rabbal 'Alamin 🤲
 
 Tag: ${waTag}
 
-Dikirim oleh Birthday FabrikBot 🎂`;
+Dikirim oleh Birthday FabrikBot🎂`;
 }
 
 /**
@@ -204,10 +207,18 @@ async function sendBirthdayMessage(birthday) {
 
     console.log(`📤 Mengirim ucapan untuk ${birthday.nama} (${age} tahun) ke grup ${birthday.grup_nama}...`);
 
-    // TEST: Send without mentions
-    await sock.sendMessage(birthday.grup_id, {
-      text: message
-    });
+    // Send with mentions if nomor_wa is provided
+    if (birthday.nomor_wa) {
+      const mentionJid = `${birthday.nomor_wa}@s.whatsapp.net`;
+      await sock.sendMessage(birthday.grup_id, {
+        text: message,
+        mentions: [mentionJid]
+      });
+    } else {
+      await sock.sendMessage(birthday.grup_id, {
+        text: message
+      });
+    }
 
     console.log(`✅ Ucapan berhasil terkirim untuk ${birthday.nama}!`);
     writeLog(`Ucapan terkirim untuk ${birthday.nama} di grup ${birthday.grup_nama}`);
@@ -484,13 +495,17 @@ async function connectToWhatsApp() {
     }
 
     if (connection === 'close') {
-      const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
+      const statusCode = lastDisconnect?.error?.output?.statusCode;
+      const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
+      const isRestartRequired = statusCode === DisconnectReason.restartRequired;
 
       console.log('❌ Koneksi terputus:', lastDisconnect?.error?.message);
 
-      // Only auto-reconnect if we've successfully connected before
-      // This prevents reconnect loop when QR hasn't been scanned
-      if (shouldReconnect && hasConnectedBefore) {
+      // Always reconnect if restart is required (e.g., after successful QR pairing)
+      if (isRestartRequired) {
+        console.log('🔄 Restart required after pairing, reconnecting in 2 seconds...');
+        setTimeout(() => connectToWhatsApp(), 2000);
+      } else if (shouldReconnect && hasConnectedBefore) {
         console.log('🔄 Mencoba reconnect dalam 5 detik...');
         setTimeout(() => connectToWhatsApp(), 5000);
       } else if (!hasConnectedBefore) {
